@@ -12,7 +12,7 @@ import static domain.TableType.*;
 public class HtmlParsingUtil {
 
     private static final String COLUMN = "th";
-    private static final String ROWS = "tr";
+    private static final String ROW = "tr";
 
     public List<Element> extractTablesFromHTML(Document sourceHtml, List<Element> tableList) {
 
@@ -58,9 +58,9 @@ public class HtmlParsingUtil {
         String column1 = fields.get(0).text();
         String column2 = fields.get(1).text();
         String column3 = fields.get(2).text();
-        String column4 = fields.get(3).text();
         switch (tableType){
             case BUILD_STACK:
+                String column4 = fields.get(3).text();
                 return new BuildStack(column1, column2, column3, column4);
             case INFRASTRUCTURE:
                 return new Infrastructure(column1, column2, column3);

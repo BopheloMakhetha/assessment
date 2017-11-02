@@ -1,5 +1,6 @@
 package integration;
 
+import domain.Table;
 import domain.TableType;
 import domain.WebFile;
 import org.jsoup.Jsoup;
@@ -10,7 +11,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import util.HtmlParsingUtil;
 import util.WebFileUtil;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,4 +79,23 @@ public class HtmlParsingUtilIntegrationTest {
         Assert.assertEquals(TableType.MONITORING, tableType);
     }
 
+    @Test
+    public void testValidTableRowsGetConvertedToTables() throws Exception {
+        List<Element> tables = new ArrayList<>();
+        tables = htmlParsingUtil.extractTablesFromHTML(Jsoup.parse(sourceHtml), tables);
+        Element programmingStackRecord = tables.get(0).select("tr").first();
+        Element buildStackRecord = tables.get(1).select("tr").first();
+        Element infrastructureRecord = tables.get(2).select("tr").first();
+        Element monitoringingRecord = tables.get(3).select("tr").first();
+
+        Table programmingStack = htmlParsingUtil.convertHtmlRowToTableRecord(programmingStackRecord, TableType.PROGRAMMING_STACK);
+        Table buildStack = htmlParsingUtil.convertHtmlRowToTableRecord(buildStackRecord, TableType.BUILD_STACK);
+        Table infrastructure = htmlParsingUtil.convertHtmlRowToTableRecord(infrastructureRecord, TableType.INFRASTRUCTURE);
+        Table monitoring = htmlParsingUtil.convertHtmlRowToTableRecord(monitoringingRecord, TableType.MONITORING);
+
+        Assert.assertTrue(programmingStack.getClass().getName().equals("domain.ProgrammingStack"));
+        Assert.assertTrue(buildStack.getClass().getName().equals("domain.BuildStack"));
+        Assert.assertTrue(infrastructure.getClass().getName().equals("domain.Infrastructure"));
+        Assert.assertTrue(monitoring.getClass().getName().equals("domain.Monitoring"));
+    }
 }
