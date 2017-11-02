@@ -8,8 +8,8 @@ public class WebFile {
     private StringBuilder fileContent;
     private final URL url;
 
-    public WebFile(String url) throws MalformedURLException {
-        this.url = new URL(url);
+    public WebFile(URL url) throws MalformedURLException {
+        this.url = url;
         this.fileContent = new StringBuilder();
     }
 

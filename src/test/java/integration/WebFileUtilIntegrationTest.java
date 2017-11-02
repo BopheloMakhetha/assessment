@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import util.WebFileUtil;
 
+import java.net.URL;
+
 @Category(WebFileUtil.class)
 public class WebFileUtilIntegrationTest {
 
@@ -14,7 +16,7 @@ public class WebFileUtilIntegrationTest {
     @Test
     public void testDownloadSourceFromLink() throws Exception {
         WebFileUtil webFileUtil = new WebFileUtil();
-        WebFile webFile = new WebFile(url);
+        WebFile webFile = new WebFile(new URL(url));
         webFileUtil.populateWebfile(webFile);
 
         Assert.assertNotNull(webFile.getFileContent());
