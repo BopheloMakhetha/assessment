@@ -11,8 +11,9 @@ import static domain.TableType.*;
 
 public class HtmlParsingUtil {
 
-    private static final String COLUMN = "th";
-    private static final String ROW = "tr";
+    public static final String TABLE_HEADING = "th";
+    public static final String ROW = "tr";
+    public static final String COLUMN = "td";
 
     public List<Element> extractTablesFromHTML(Document sourceHtml, List<Element> tableList) {
 
@@ -23,7 +24,7 @@ public class HtmlParsingUtil {
     }
 
     public TableType getTableType(Element table) throws Exception {
-        Elements headings = table.select(COLUMN);
+        Elements headings = table.select(TABLE_HEADING);
 
         switch (headings.size()) {
             case 3:
@@ -55,24 +56,37 @@ public class HtmlParsingUtil {
 
     public Table convertHtmlRowToTableRecord(Element row, TableType tableType) throws  Exception{
         Elements fields = row.select(COLUMN);
-        String column1 = fields.get(0).text();
-        String column2 = fields.get(1).text();
-        String column3 = fields.get(2).text();
-        switch (tableType){
-            case BUILD_STACK:
-                String column4 = fields.get(3).text();
-                return new BuildStack(column1, column2, column3, column4);
-            case INFRASTRUCTURE:
-                return new Infrastructure(column1, column2, column3);
-            case MONITORING:
-                return new Monitoring(column1, column2, column3);
-            case PROGRAMMING_STACK:
-                return new ProgrammingStack(column1, column2, column3);
+
+        if(fields.size() > 0) {
+            String column1 = extractTextFromElement(fields.get(0));
+            String column2 = extractTextFromElement(fields.get(1));
+            String column3 = extractTextFromElement(fields.get(2));
+            switch (tableType) {
+                case BUILD_STACK:
+                    String column4 = extractTextFromElement(fields.get(3));
+                    return new BuildStack(column1, column2, column3, column4);
+                case INFRASTRUCTURE:
+                    return new Infrastructure(column1, column2, column3);
+                case MONITORING:
+                    return new Monitoring(column1, column2, column3);
+                case PROGRAMMING_STACK:
+                    return new ProgrammingStack(column1, column2, column3);
+            }
         }
         throw new Exception("UnSupported Table");
     }
     private boolean headingIsInHeadings(Elements elements, String heading, int index) {
         return elements.get(index).text().equals(heading);
+    }
+
+    private String extractTextFromElement(Element element){
+        String text;
+        try{
+            text = element.text();
+        }catch (Exception e){
+            text = "";
+        }
+        return text;
     }
 }
 
