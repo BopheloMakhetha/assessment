@@ -1,6 +1,6 @@
 package domain;
 
-public class BuildStack {
+public class BuildStack  extends Table{
 
     private final String tech;
     private final String use;

@@ -1,6 +1,9 @@
 package domain;
 
-public class ProgrammingStack {
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class ProgrammingStack extends Table {
     private final String tech;
     private final String reason;
     private final String lifeCycle;

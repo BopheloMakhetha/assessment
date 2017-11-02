@@ -1,6 +1,6 @@
 package domain;
 
-public class Monitoring {
+public class Monitoring extends Table {
     private final String tech;
     private final String use;
     private final String reason;

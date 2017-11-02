@@ -1,6 +1,6 @@
 package domain;
 
-public class Infrastructure {
+public class Infrastructure extends Table{
     private final String infrastructure;
     private final String use;
 
