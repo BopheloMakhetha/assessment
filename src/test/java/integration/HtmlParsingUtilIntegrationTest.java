@@ -1,8 +1,8 @@
 package integration;
 
+import domain.TableType;
 import domain.WebFile;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,7 +12,6 @@ import util.HtmlParsingUtil;
 import util.WebFileUtil;
 
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +19,11 @@ import java.util.List;
 public class HtmlParsingUtilIntegrationTest {
 
     String sourceHtml;
+    HtmlParsingUtil htmlParsingUtil = new HtmlParsingUtil();
 
     @Before
     public void setup() throws Exception{
-        URL url = Paths.get("C:\\Users\\bophelo.mkhwanazi\\Desktop\\assessment\\src\\test\\java\\resource\\sample.html").toUri().toURL();
+        URL url = new URL("https://github.com/egis/handbook/blob/master/Tech-Stack.md");
         WebFile webFile = new WebFile(url);
         WebFileUtil webFileUtil = new WebFileUtil();
         webFileUtil.populateWebfile(webFile);
@@ -32,11 +32,51 @@ public class HtmlParsingUtilIntegrationTest {
 
     @Test
     public void testThatTablesGetExtractedFromHtml(){
-        HtmlParsingUtil htmlParsingUtil = new HtmlParsingUtil();
         List<Element> tables = new ArrayList<>();
-        tables = htmlParsingUtil.extractTableFromHTML(Jsoup.parse(sourceHtml), tables);
+        tables = htmlParsingUtil.extractTablesFromHTML(Jsoup.parse(sourceHtml), tables);
 
-        Assert.assertEquals(2, tables.size());
-        Assert.assertEquals("Jill",tables.get(0).select("td").get(0).text());
+        Assert.assertEquals(4, tables.size());
+        Assert.assertEquals("Tech",tables.get(0).select("th").get(0).text());
     }
+
+    @Test
+    public void testThatTableClassificationWorksForProgrammingStack() throws Exception {
+        List<Element> tables = new ArrayList<>();
+        tables = htmlParsingUtil.extractTablesFromHTML(Jsoup.parse(sourceHtml), tables);
+
+        TableType tableType = htmlParsingUtil.getTableType(tables.get(0));
+
+        Assert.assertEquals(TableType.PROGRAMMING_STACK, tableType);
+    }
+
+    @Test
+    public void testThatTableClassificationWorksForBuildStack() throws Exception {
+        List<Element> tables = new ArrayList<>();
+        tables = htmlParsingUtil.extractTablesFromHTML(Jsoup.parse(sourceHtml), tables);
+
+        TableType tableType = htmlParsingUtil.getTableType(tables.get(1));
+
+        Assert.assertEquals(TableType.BUILD_STACK, tableType);
+    }
+
+    @Test
+    public void testThatTableClassificationWorksForInfrastructure() throws Exception {
+        List<Element> tables = new ArrayList<>();
+        tables = htmlParsingUtil.extractTablesFromHTML(Jsoup.parse(sourceHtml), tables);
+
+        TableType tableType = htmlParsingUtil.getTableType(tables.get(2));
+
+        Assert.assertEquals(TableType.INFRASTRUCTURE, tableType);
+    }
+
+    @Test
+    public void testThatTableClassificationWorksForMonitoring() throws Exception {
+        List<Element> tables = new ArrayList<>();
+        tables = htmlParsingUtil.extractTablesFromHTML(Jsoup.parse(sourceHtml), tables);
+
+        TableType tableType = htmlParsingUtil.getTableType(tables.get(3));
+
+        Assert.assertEquals(TableType.MONITORING, tableType);
+    }
+
 }
