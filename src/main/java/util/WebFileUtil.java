@@ -1,6 +1,12 @@
 package util;
 
 import domain.WebFile;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -21,7 +27,7 @@ public class WebFileUtil {
         buffer.close();
     }
 
-    public BufferedReader getBufferedReaderFromInputStream(InputStream inputStream) throws Exception {
+    private BufferedReader getBufferedReaderFromInputStream(InputStream inputStream) throws Exception {
         return new BufferedReader(new InputStreamReader(inputStream, CHARSET));
     }
 }
