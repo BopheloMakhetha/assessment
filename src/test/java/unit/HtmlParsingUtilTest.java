@@ -1,5 +1,6 @@
 package unit;
 
+import domain.Table;
 import domain.TableType;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -38,8 +39,6 @@ public class HtmlParsingUtilTest {
 
     @Test(expected = Exception.class)
     public void testTableClassificationThrowsExceptionForUnsupportedTable() throws Exception {
-
-
 
         when(table.select(anyString())).thenReturn(headings);
         when(headings.size()).thenReturn(2);
@@ -133,5 +132,27 @@ public class HtmlParsingUtilTest {
 
         TableType tableType = htmlParsingUtil.getTableType(table);
         Assert.assertEquals(TableType.MONITORING, tableType);
+    }
+
+    @Test
+    public void testValidTableRowsGetConvertedToTables() throws Exception {
+        Element row = mock(Element.class);
+        Elements columns = mock(Elements.class);
+        String data = "test data";
+        Element column = mock(Element.class);
+
+        when(row.select(anyString())).thenReturn(columns);
+        when(columns.get(anyInt())).thenReturn(column);
+        when(column.text()).thenReturn(data);
+
+        Table programmingStackRecord = htmlParsingUtil.convertHtmlRowToTableRecord(row, TableType.PROGRAMMING_STACK);
+        Table buildStack = htmlParsingUtil.convertHtmlRowToTableRecord(row, TableType.BUILD_STACK);
+        Table infrastructure = htmlParsingUtil.convertHtmlRowToTableRecord(row, TableType.INFRASTRUCTURE);
+        Table monitoring = htmlParsingUtil.convertHtmlRowToTableRecord(row, TableType.MONITORING);
+
+        Assert.assertTrue(programmingStackRecord.getClass().getName().equals("domain.ProgrammingStack"));
+        Assert.assertTrue(buildStack.getClass().getName().equals("domain.BuildStack"));
+        Assert.assertTrue(infrastructure.getClass().getName().equals("domain.Infrastructure"));
+        Assert.assertTrue(monitoring.getClass().getName().equals("domain.Monitoring"));
     }
 }

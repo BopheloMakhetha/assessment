@@ -1,18 +1,18 @@
 package util;
 
-import domain.TableType;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
+import domain.*;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.List;
 
+import static domain.TableType.*;
+
 public class HtmlParsingUtil {
 
-    private static final String HEADING = "th";
+    private static final String COLUMN = "th";
+    private static final String ROWS = "tr";
 
     public List<Element> extractTablesFromHTML(Document sourceHtml, List<Element> tableList) {
 
@@ -23,7 +23,7 @@ public class HtmlParsingUtil {
     }
 
     public TableType getTableType(Element table) throws Exception {
-        Elements headings = table.select(HEADING);
+        Elements headings = table.select(COLUMN);
 
         switch (headings.size()) {
             case 3:
@@ -46,12 +46,31 @@ public class HtmlParsingUtil {
                         && headingIsInHeadings(headings, "Use", 1)
                         && headingIsInHeadings(headings, "Reason", 2)
                         && headingIsInHeadings(headings, "Lifecycle", 3))
-                    return TableType.BUILD_STACK;
+                    return BUILD_STACK;
                 break;
         }
         throw new Exception("Table format not supported");
     }
 
+
+    public Table convertHtmlRowToTableRecord(Element row, TableType tableType) throws  Exception{
+        Elements fields = row.select(COLUMN);
+        String column1 = fields.get(0).text();
+        String column2 = fields.get(1).text();
+        String column3 = fields.get(2).text();
+        String column4 = fields.get(3).text();
+        switch (tableType){
+            case BUILD_STACK:
+                return new BuildStack(column1, column2, column3, column4);
+            case INFRASTRUCTURE:
+                return new Infrastructure(column1, column2, column3);
+            case MONITORING:
+                return new Monitoring(column1, column2, column3);
+            case PROGRAMMING_STACK:
+                return new ProgrammingStack(column1, column2, column3);
+        }
+        throw new Exception("UnSupported Table");
+    }
     private boolean headingIsInHeadings(Elements elements, String heading, int index) {
         return elements.get(index).text().equals(heading);
     }
